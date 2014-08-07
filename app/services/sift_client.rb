@@ -1,11 +1,19 @@
 class SiftClient
+  API_URL = 'https://api.siftscience.com/v203/events'
+
   def initialize(order, shipping_address, billing_address)
     @order = order
     @shipping = shipping_address
     @billing = billing_address
   end
 
-  def create_order_event
+  def send!
+    Excon.post(API_URL, body: data.to_json)
+  end
+
+  private
+
+  def data
     {
       '$type'    => '$create_order',
       '$api_key' => api_key,
@@ -31,8 +39,6 @@ class SiftClient
       end
     }
   end
-
-  private
 
   def build_address(a)
     {
