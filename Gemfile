@@ -9,3 +9,5 @@ group :test do
   gem 'rspec-rails'
   gem 'webmock'
 end
+
+gem 'rails_12factor', group: :production
