@@ -15,6 +15,13 @@ class EventsController < ApplicationController
     head :ok
   end
 
+  def bad_user_form
+    auth = authenticate_with_http_basic do |u, p|
+      u == ENV['HTTP_USER'] && p == ENV['HTTP_PASSWORD']
+    end
+    request_http_basic_authentication unless auth
+  end
+
   def bad_user
     SiftClient.bad_user(params[:client_id])
 
