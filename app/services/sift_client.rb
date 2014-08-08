@@ -1,50 +1,32 @@
 class SiftClient
   API_URL = 'https://api.siftscience.com/v203/events'
 
-  def initialize(order, shipping_address, billing_address, items)
+  def initialize(order, shipping_address, billing_address)
     @order = order
     @shipping = shipping_address
     @billing = billing_address
-    @items = items
   end
 
   def send!
     response = Excon.post(API_URL, body: data.to_json)
-    if JSON.parse(response.body)['status'] == 0
-      Rails.logger.debug('Siftscience API Response: ' + response.body)
-    else
-      Rails.logger.error('Siftscience API Error: ' + response.body)
-    end
+    Rails.logger.info('Siftscience API Response: ' + response.body)
   end
 
   private
 
   def data
     {
-      '$type'    => '$create_order',
+      '$type' => '$transaction',
       '$api_key' => api_key,
       '$user_id' => @order['client_id'].to_s,
-
-      '$order_id'      => @order['code'],
-      '$user_email'    => @order['email'],
-      '$amount'        => convert_price(@order['total']),
+      '$user_email' => @order['email'],
+      '$amount' => convert_price(@order['total']),
+      '$transaction_status' => '$success',
+      '$order_id' => @order['code'],
       '$currency_code' => 'BRL',
-
-      "$payment_methods" => [build_payment_method].compact,
-
+      '$payment_method' => build_payment_method,
       '$billing_address'  => build_address(@billing),
-      '$shipping_address' => build_address(@shipping),
-
-      '$items' => @items.map do |i|
-        {
-          '$item_id'       => i['reference'],
-          '$product_title' => [i['product_name'], i['variant_name']].reject(&:blank?).join(' '),
-          '$price'         => convert_price(i['price']),
-          '$currency_code' => 'BRL',
-          '$quantity'      => i['quantity'],
-          '$sku'           => i['sku']
-        }
-      end
+      '$shipping_address' => build_address(@shipping)
     }
   end
 
