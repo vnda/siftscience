@@ -10,8 +10,7 @@ class SiftClient
 
   def send!
     response = Excon.post(API_URL, body: data.to_json)
-    data = JSON.parse(response.body)
-    if data['status'] == 0
+    if JSON.parse(response.body)['status'] == 0
       Rails.logger.debug('Siftscience API Response: ' + response.body)
     else
       Rails.logger.error('Siftscience API Error: ' + response.body)
@@ -30,6 +29,8 @@ class SiftClient
       '$user_email'    => @order['email'],
       '$amount'        => convert_price(@order['total']),
       '$currency_code' => 'BRL',
+
+      "$payment_methods" => [build_payment_method].compact,
 
       '$billing_address'  => build_address(@billing),
       '$shipping_address' => build_address(@shipping),
@@ -58,6 +59,17 @@ class SiftClient
       '$zipcode'   => a['zip'],
       '$phone'     => [a['first_phone_area'], a['first_phone']].reject(&:blank?).join(' '),
     }
+  end
+
+  def build_payment_method
+    if @order['payment_method'] == 'Depósito'
+      { '$payment_type' => '$electronic_fund_transfer' }
+    elsif @order['payment_method'].include?('Crédito')
+      {
+        '$payment_type' => '$credit_card',
+        '$card_last4'   => @order['card_number'].try { |n| n[/\d{4}$/] }
+      }
+    end
   end
 
   def convert_price(price)
