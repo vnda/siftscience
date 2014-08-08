@@ -1,0 +1,10 @@
+<h1>Denunciar Cliente</h1>
+<%= form_tag '/bad_user', method: :post do %>
+  <label>ID do cliente:</label>
+  <%= text_field_tag :client_id, '', required: true %>
+  <%= submit_tag 'Denunciar' %>
+<% end %>
+
+<% if flash[:notice].present? %>
+  <script>alert("<%= flash[:notice] %>");</script>
+<% end %>

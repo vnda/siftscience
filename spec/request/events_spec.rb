@@ -106,7 +106,7 @@ describe EventsController, type: :request do
     JSON
   }
 
-  it "sends events" do
+  specify "#transaction" do
     stub_request(:get, 'https://lorem:ipsum@shop.com.br/api/v2/orders/FC7C1DC9F0/shipping_address')
       .to_return(status: 200, body: address_json)
     stub_request(:get, 'https://lorem:ipsum@shop.com.br/api/v2/orders/FC7C1DC9F0/billing_address')
@@ -116,7 +116,7 @@ describe EventsController, type: :request do
     api_stub = stub_request(:post, 'https://api.siftscience.com/v203/events')
       .to_return(body: '{ "status" : 0 , "error_message" : "OK" , "time" : 1407502567 , "request" : {} }')
 
-    post '/', {}, { 'RAW_POST_DATA' => order_json }
+    post '/transaction', {}, { 'RAW_POST_DATA' => order_json }
 
     expect(api_stub).to have_been_requested
   end

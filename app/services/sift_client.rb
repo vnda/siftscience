@@ -1,33 +1,32 @@
-class SiftClient
-  API_URL = 'https://api.siftscience.com/v203/events'
+module SiftClient
+  extend self
+  API_URL = 'https://api.siftscience.com/v203/'
 
-  def initialize(order, shipping_address, billing_address)
-    @order = order
-    @shipping = shipping_address
-    @billing = billing_address
+  def transaction(order, shipping_address, billing_address)
+    send_request('events',
+      '$type' => '$transaction',
+      '$user_id' => order['client_id'].to_s,
+      '$user_email' => order['email'],
+      '$amount' => convert_price(order['total']),
+      '$transaction_status' => '$success',
+      '$order_id' => order['code'],
+      '$currency_code' => 'BRL',
+      '$payment_method' => build_payment_method(order),
+      '$billing_address'  => build_address(billing_address),
+      '$shipping_address' => build_address(shipping_address)
+    )
   end
 
-  def send!
-    response = Excon.post(API_URL, body: data.to_json)
-    Rails.logger.info('Siftscience API Response: ' + response.body)
+  def bad_user(client_id)
+    send_request("users/#{client_id}/labels", '$is_bad' => true)
   end
 
   private
 
-  def data
-    {
-      '$type' => '$transaction',
-      '$api_key' => api_key,
-      '$user_id' => @order['client_id'].to_s,
-      '$user_email' => @order['email'],
-      '$amount' => convert_price(@order['total']),
-      '$transaction_status' => '$success',
-      '$order_id' => @order['code'],
-      '$currency_code' => 'BRL',
-      '$payment_method' => build_payment_method,
-      '$billing_address'  => build_address(@billing),
-      '$shipping_address' => build_address(@shipping)
-    }
+  def send_request(path, event)
+    json = event.merge('$api_key' => api_key).to_json
+    response = Excon.post(API_URL + path, body: json)
+    Rails.logger.info('Siftscience API Response: ' + response.body)
   end
 
   def build_address(a)
@@ -43,13 +42,13 @@ class SiftClient
     }
   end
 
-  def build_payment_method
-    if @order['payment_method'] == 'Depósito'
+  def build_payment_method(order)
+    if order['payment_method'] == 'Depósito'
       { '$payment_type' => '$electronic_fund_transfer' }
-    elsif @order['payment_method'].include?('Crédito')
+    elsif order['payment_method'].include?('Crédito')
       {
         '$payment_type' => '$credit_card',
-        '$card_last4'   => @order['card_number'].try { |n| n[/\d{4}$/] }
+        '$card_last4'   => order['card_number'].try { |n| n[/\d{4}$/] }
       }
     end
   end
