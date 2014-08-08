@@ -1,6 +1,11 @@
 require 'rails_helper'
 
 describe EventsController, type: :request do
+  before do
+    ENV['VNDA_API_HOST'] = 'shop.com.br'
+    ENV['VNDA_API_USER'] = 'lorem'
+    ENV['VNDA_API_PASSWORD'] = 'ipsum'
+  end
   let(:order_json) {
     <<-JSON
       {
@@ -60,12 +65,59 @@ describe EventsController, type: :request do
     JSON
   }
 
+  let(:items_json) {
+    <<-JSON
+      [
+        {
+          "id": 359,
+          "variant_id": 409,
+          "quantity": 1,
+          "price": 25.5,
+          "total": 25.5,
+          "weight": 0.1,
+          "width": 11,
+          "height": 2,
+          "length": 16,
+          "extra": {},
+          "picture_url": null,
+          "reference": "1070",
+          "sku": "1070",
+          "product_name": "Sal Granulado Body & Bubble Blue Berry",
+          "variant_name": null
+        },
+        {
+          "id": 360,
+          "variant_id": 305,
+          "quantity": 3,
+          "price": 26.9,
+          "total": 80.7,
+          "weight": 0.1,
+          "width": 11,
+          "height": 2,
+          "length": 16,
+          "extra": {},
+          "picture_url": null,
+          "reference": "3811",
+          "sku": "3811",
+          "product_name": "Condicionador Secos e Danificados (Geléia Real)",
+          "variant_name": null
+        }
+      ]
+    JSON
+  }
+
   it "sends events" do
-    stub_request(:get, 'https://bodystore.vnda.com.br/api/v2/orders/FC7C1DC9F0/shipping_address')
+    stub_request(:get, 'https://lorem:ipsum@shop.com.br/api/v2/orders/FC7C1DC9F0/shipping_address')
       .to_return(status: 200, body: address_json)
-    stub_request(:get, 'https://bodystore.vnda.com.br/api/v2/orders/FC7C1DC9F0/billing_address')
+    stub_request(:get, 'https://lorem:ipsum@shop.com.br/api/v2/orders/FC7C1DC9F0/billing_address')
       .to_return(status: 200, body: address_json)
+    stub_request(:get, 'https://lorem:ipsum@shop.com.br/api/v2/orders/FC7C1DC9F0/items')
+      .to_return(status: 200, body: items_json)
+    api_stub = stub_request(:post, 'https://api.siftscience.com/v203/events')
+      .to_return(body: '{ "status" : 0 , "error_message" : "OK" , "time" : 1407502567 , "request" : {} }')
+
     post '/', {}, { 'RAW_POST_DATA' => order_json }
-    raise response.body
+
+    expect(api_stub).to have_been_requested
   end
 end
