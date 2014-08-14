@@ -1,6 +1,9 @@
-module SiftClient
-  extend self
+class SiftClient
   API_URL = 'https://api.siftscience.com/v203/'
+
+  def initialize(api_key)
+    @api_key = api_key
+  end
 
   def transaction(order, shipping_address, billing_address)
     send_request('events',
@@ -24,7 +27,7 @@ module SiftClient
   private
 
   def send_request(path, event)
-    json = event.merge('$api_key' => api_key).to_json
+    json = event.merge('$api_key' => @api_key).to_json
     response = Excon.post(API_URL + path, body: json)
     Rails.logger.info('Siftscience API Response: ' + response.body)
   end
@@ -56,9 +59,5 @@ module SiftClient
   def convert_price(price)
     return if price.blank?
     (price.to_f * 1_000_000).to_i
-  end
-
-  def api_key
-    ENV['SIFT_API_KEY']
   end
 end
