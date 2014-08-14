@@ -1,0 +1,28 @@
+<%= form_for @shop do |f| %>
+  <%= render 'shared/error_messages', resource: @shop %>
+
+  <div class="form-group">
+    <%= f.label :sift_api_key %>
+    <%= f.text_field :sift_api_key, required: true, class: 'form-control' %>
+  </div>
+
+  <fieldset>
+    <legend>API Vnda</legend>
+    <div class="form-group">
+      <%= f.label :vnda_api_host %>
+      <%= f.text_field :vnda_api_host, required: true, class: 'form-control' %>
+    </div>
+    <div class="form-group">
+      <%= f.label :vnda_api_user %>
+      <%= f.text_field :vnda_api_user, required: true, class: 'form-control' %>
+    </div>
+    <div class="form-group">
+      <%= f.label :vnda_api_password %>
+      <%= f.text_field :vnda_api_password, required: true, class: 'form-control' %>
+    </div>
+  </fieldset>
+  <p>
+    <%= f.submit 'Salvar', class: 'btn btn-primary' %>
+    <%= link_to 'Cancelar', :back, class: 'btn btn-default'  %>
+  </p>
+<% end %>
