@@ -5,18 +5,41 @@ class SiftClient
     @api_key = api_key
   end
 
+  def create_order(order, shipping_address, billing_address, items)
+    send_request('events',
+      '$type'             => '$create_order',
+      '$user_id'          => order['client_id'].to_s,
+      '$user_email'       => order['email'],
+      '$amount'           => convert_price(order['total']),
+      '$order_id'         => order['code'],
+      '$currency_code'    => 'BRL',
+      '$payment_methods'  => [build_payment_method(order)],
+      '$billing_address'  => build_address(billing_address),
+      '$shipping_address' => build_address(shipping_address),
+      '$items' => items.map do |i|
+        {
+          '$item_id'       => i['reference'],
+          '$product_title' => i['product_name'],
+          '$price'         => i['price'],
+          '$sku'           => i['sku'],
+          '$quantity'      => i['quantity']
+        }
+      end
+    )
+  end
+
   def transaction(order, shipping_address, billing_address)
     send_request('events',
-      '$type' => '$transaction',
-      '$user_id' => order['client_id'].to_s,
-      '$user_email' => order['email'],
-      '$amount' => convert_price(order['total']),
+      '$type'               => '$transaction',
+      '$user_id'            => order['client_id'].to_s,
+      '$user_email'         => order['email'],
+      '$amount'             => convert_price(order['total']),
       '$transaction_status' => '$success',
-      '$order_id' => order['code'],
-      '$currency_code' => 'BRL',
-      '$payment_method' => build_payment_method(order),
-      '$billing_address'  => build_address(billing_address),
-      '$shipping_address' => build_address(shipping_address)
+      '$order_id'           => order['code'],
+      '$currency_code'      => 'BRL',
+      '$payment_method'     => build_payment_method(order),
+      '$billing_address'    => build_address(billing_address),
+      '$shipping_address'   => build_address(shipping_address)
     )
   end
 

@@ -4,6 +4,19 @@ class EventsController < ApplicationController
     head :unauthorized
   end
 
+  def create_order
+    order = JSON.parse(request.body.read)
+
+    conn = Excon.new("http://#{shop.vnda_api_host}/", user: shop.vnda_api_user, password: shop.vnda_api_password)
+    shipping = JSON.parse(conn.get(path: "/api/v2/orders/#{order['code']}/shipping_address").body)
+    billing  = JSON.parse(conn.get(path: "/api/v2/orders/#{order['code']}/billing_address").body)
+    items    = JSON.parse(conn.get(path: "/api/v2/orders/#{order['code']}/items").body)
+
+    SiftClient.new(shop.sift_api_key).create_order(order, shipping, billing, items)
+
+    head :ok
+  end
+
   def transaction
     order = JSON.parse(request.body.read)
 
