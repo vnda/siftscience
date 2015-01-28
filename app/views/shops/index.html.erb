@@ -1,0 +1,28 @@
+<header class="page-header clearfix">
+  <h3 class="pull-left" style="margin-top: 0">Lojas</h3>
+  <%= link_to new_shop_path, class: 'btn btn-success pull-right' do %>
+    <span class="glyphicon glyphicon-plus"></span> Nova Loja
+  <% end %>
+</header>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Host</th>
+      <th>URL para hook</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= content_tag_for :tr, @shops do |shop| %>
+      <td><%= link_to shop.vnda_api_host, edit_shop_path(shop) %></td>
+      <td><%= transaction_url(token: shop.token) %></td>
+      <td>
+        <%= link_to shop, method: :delete,
+            data: { confirm: 'Tem certeza que deseja remover a loja?' } do %>
+          <span class="glyphicon glyphicon-remove"></span>
+        <% end %>
+      </td>
+    <% end %>
+  </tbody>
+</table>
