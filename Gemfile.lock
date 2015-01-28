@@ -53,6 +53,8 @@ GEM
     minitest (5.4.0)
     multi_json (1.10.1)
     polyglot (0.3.5)
+    puma (2.11.0)
+      rack (>= 1.1, < 2.0)
     rack (1.5.2)
     rack-test (0.6.2)
       rack (>= 1.0)
@@ -122,6 +124,7 @@ DEPENDENCIES
   dotenv-rails
   excon
   jbuilder (~> 2.0)
+  puma
   rails (= 4.1.4)
   rails_12factor
   rspec-rails

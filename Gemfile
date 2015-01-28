@@ -4,6 +4,7 @@ gem 'rails', '4.1.4'
 gem 'jbuilder', '~> 2.0'
 gem 'excon'
 gem 'dotenv-rails'
+gem 'puma'
 
 group :test do
   gem 'rspec-rails'
