@@ -76,7 +76,7 @@ class SiftClient
         '$payment_type' => '$credit_card',
         '$card_last4'   => order['card_number'].try { |n| n[/\d{4}$/] }
       }
-    if order['payment_method'] == 'Boleto'
+    elsif order['payment_method'] == 'Boleto'
       { '$payment_type' => '$third_party_processor' }
     end
   end
