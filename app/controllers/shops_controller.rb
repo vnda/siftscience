@@ -20,12 +20,12 @@ class ShopsController < ApplicationController
 
       if params[:subdomain].present?
         response = Excon.post("https://api3.siftscience.com/v3/partners/#{ENV["PARTNER_ID"]}/accounts",
-          :body => URI.encode_www_form(
+          :body => {
             :site_url => @shop.vnda_api_host,
             :site_email => "#{params[:subdomain]}@vnda.com.br",
             :analyst_email => "#{params[:subdomain]}@vnda.com.br",
             :password => "#{params[:subdomain]}1101"
-          ),
+          }.to_json,
           :headers => {'Authorization' => "Basic #{ENV["PARTNER_KEY"]}"})
         account = MultiJson.load(response.body)
         @shop.sift_api_key = account[ Rails.env.production? ? "production" : "sandbox" ]["api_keys"].first["key"]
