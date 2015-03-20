@@ -3,7 +3,7 @@
 
   <div class="form-group">
     <% if @shop.new_record? %>
-      <%= label_tag "Subdominio da loja" %><small>Deixar em branco para não criar conta no Sift Science</small>
+      <%= label_tag "Subdominio da loja" %> <small>Deixar em branco para não criar conta no Sift Science</small>
       <%= text_field_tag "subdomain", nil, class: 'form-control' %>
     <% else %>
       <%= f.label :sift_api_key %>
