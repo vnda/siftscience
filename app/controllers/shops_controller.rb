@@ -26,7 +26,7 @@ class ShopsController < ApplicationController
             :analyst_email => "#{params[:subdomain]}@vnda.com.br",
             :password => "#{params[:subdomain]}1101"
           }.to_json,
-          :headers => {'Authorization' => "Basic #{ENV["PARTNER_KEY"]}"})
+          :headers => {'Authorization' => "Basic #{ENV["PARTNER_KEY"]}", 'Content-Type' => 'application/json' })
         account = MultiJson.load(response.body)
         @shop.sift_api_key = account[ Rails.env.production? ? "production" : "sandbox" ]["api_keys"].first["key"]
         @shop.save
