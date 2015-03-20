@@ -16,17 +16,17 @@
   <tbody>
     <%= content_tag_for :tr, @shops do |shop| %>
       <td><%= link_to shop.vnda_api_host, edit_shop_path(shop) %></td>
-      <td><%= transaction_url(token: shop.token) %></td>
-      <td>
-        <%= link_to shop, method: :delete,
-            data: { confirm: 'Tem certeza que deseja remover a loja?' } do %>
-          <span class="glyphicon glyphicon-remove"></span>
-        <% end %>
-
+      <td><%= transaction_url(token: shop.token) %>
         <% @accounts["data"].each do |account| %>
           <% if account["production"]["api_keys"].first["key"] == shop.sift_api_key %>
             <pre><%= account %></pre>
           <% end %>
+        <% end %>
+      </td>
+      <td>
+        <%= link_to shop, method: :delete,
+            data: { confirm: 'Tem certeza que deseja remover a loja?' } do %>
+          <span class="glyphicon glyphicon-remove"></span>
         <% end %>
       </td>
     <% end %>
