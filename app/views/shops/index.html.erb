@@ -22,12 +22,14 @@
             data: { confirm: 'Tem certeza que deseja remover a loja?' } do %>
           <span class="glyphicon glyphicon-remove"></span>
         <% end %>
+
+        <% @accounts["data"].each do |account| %>
+          <% if account["production"]["api_keys"]["key"] == shop.sifi_api_key %>
+            <pre><%= account %></pre>
+          <% end %>
+        <% end %>
       </td>
     <% end %>
   </tbody>
 </table>
 
-<p>Total: <%= @accounts["total_results"] %></p>
-<% @accounts["data"].each do |account| %>
-  <pre><%= account %></pre>
-<% end %>
