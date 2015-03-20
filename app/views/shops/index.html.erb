@@ -19,7 +19,7 @@
       <td><%= transaction_url(token: shop.token) %>
         <% @accounts["data"].each do |account| %>
           <% if [account["production"]["api_keys"].first["key"], account["sandbox"]["api_keys"].first["key"]].include?(shop.sift_api_key) %>
-            <pre><%= account %></pre>
+            <p class="wall" style="font-family: Menlo,Monaco,Consolas,"Courier New",monospace;"><%= account %></p>
           <% end %>
         <% end %>
       </td>
