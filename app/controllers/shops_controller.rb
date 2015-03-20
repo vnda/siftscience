@@ -14,6 +14,8 @@ class ShopsController < ApplicationController
 
   def create
     @shop = Shop.new(shop_params)
+    @shop.sift_api_key = "temp"
+
     if @shop.save
 
       if params[:subdomain].present?
