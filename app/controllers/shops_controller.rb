@@ -21,10 +21,10 @@ class ShopsController < ApplicationController
       if params[:subdomain].present?
         response = Excon.post("https://api3.siftscience.com/v3/partners/#{ENV["PARTNER_ID"]}/accounts",
           :body => {
-            :site_url => 'www.oden.com.br',
-            :site_email => "oden@vnda.com.br",
-            :analyst_email => "oden@vnda.com.br",
-            :password => "oden1101"
+            :site_url => @shop.vnda_api_host,
+            :site_email => "#{params[:subdomain]}@vnda.com.br",
+            :analyst_email => "#{params[:subdomain]}@vnda.com.br",
+            :password => "#{params[:subdomain]}1101"
           }.to_json,
           :headers => {'Authorization' => "Basic #{ENV["PARTNER_KEY"]}", 'Content-Type' => 'application/json' })
         if response.status == 200
