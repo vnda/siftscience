@@ -2,8 +2,13 @@
   <%= render 'shared/error_messages', resource: @shop %>
 
   <div class="form-group">
-    <%= f.label :sift_api_key %>
-    <%= f.text_field :sift_api_key, required: true, class: 'form-control' %>
+    <% if @shop.new_record? %>
+      <%= label_tag "Subdominio da loja" %>
+      <%= text_field_tag "subdomain", nil, class: 'form-control' %>
+    <% else %>
+      <%= f.label :sift_api_key %>
+      <%= f.text_field :sift_api_key, required: true, class: 'form-control' %>
+    <% end %>
   </div>
 
   <fieldset>

@@ -3,6 +3,9 @@ class ShopsController < ApplicationController
 
   def index
     @shops = Shop.all
+
+    response = Excon.get("https://api3.siftscience.com/v3/partners/#{ENV["PARTNER_ID"]}/accounts", :headers => {'Authorization' => "Basic #{ENV["PARTNER_KEY"]}"})
+    @accounts = MultiJson.load(response.body)
   end
 
   def new
@@ -12,7 +15,20 @@ class ShopsController < ApplicationController
   def create
     @shop = Shop.new(shop_params)
     if @shop.save
-      redirect_to edit_shop_path(@shop), notice: 'Loja cadastrada com sucesso'
+
+      response = Excon.post("https://api3.siftscience.com/v3/partners/#{ENV["PARTNER_ID"]}/accounts",
+        :body => URI.encode_www_form(
+          :site_url => @shop.vnda_api_host,
+          :site_email => "#{params[:subdomain]}@vnda.com.br",
+          :analyst_email => "#{params[:subdomain]}@vnda.com.br",
+          :password => "#{params[:subdomain]}1101"
+        ),
+        :headers => {'Authorization' => "Basic #{ENV["PARTNER_KEY"]}"})
+      account = MultiJson.load(response.body)
+      @shop.sift_api_key = account[ Rails.env.production? ? "production" : "sandbox" ]["api_keys"].first["key"]
+      @shop.save
+
+      redirect_to edit_shop_path(@shop), notice: "Loja cadastrada com sucesso #{account}"
     else
       render :new
     end

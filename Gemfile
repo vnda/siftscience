@@ -1,10 +1,11 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.1.4'
+ruby "2.1.5"
+gem 'rails', '4.1.9'
 gem 'pg'
 gem 'jbuilder', '~> 2.0'
 gem 'excon'
-gem 'dotenv-rails'
+gem 'dotenv-rails', group: :development
 gem 'puma'
 
 group :test do

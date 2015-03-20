@@ -26,3 +26,8 @@
     <% end %>
   </tbody>
 </table>
+
+<p>Total: <%= @accounts["total_results"] %></p>
+<% @accounts["data"].each do |account| %>
+  <pre><%= account %></pre>
+<% end %>
