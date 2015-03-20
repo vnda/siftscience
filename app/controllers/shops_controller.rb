@@ -24,7 +24,7 @@ class ShopsController < ApplicationController
             :site_url => @shop.vnda_api_host,
             :site_email => "#{params[:subdomain]}@vnda.com.br",
             :analyst_email => "#{params[:subdomain]}@vnda.com.br",
-            :password => "#{params[:subdomain]}1101"
+            :password => "#{params[:subdomain].size < 6 ? "#{params[:subdomain]}#{params[:subdomain]}" : params[:subdomain]}1101"
           }.to_json,
           :headers => {'Authorization' => "Basic #{ENV["PARTNER_KEY"]}", 'Content-Type' => 'application/json' })
         if response.status == 200
