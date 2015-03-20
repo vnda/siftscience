@@ -24,7 +24,7 @@
         <% end %>
 
         <% @accounts["data"].each do |account| %>
-          <% if account["production"]["api_keys"].first["key"] == shop.sifi_api_key %>
+          <% if account["production"]["api_keys"].first["key"] == shop.sift_api_key %>
             <pre><%= account %></pre>
           <% end %>
         <% end %>
