@@ -18,7 +18,7 @@
       <td><%= link_to shop.vnda_api_host, edit_shop_path(shop) %></td>
       <td><%= transaction_url(token: shop.token) %>
         <% @accounts["data"].each do |account| %>
-          <% if account["production"]["api_keys"].first["key"] == shop.sift_api_key %>
+          <% if [account["production"]["api_keys"].first["key"], account["sandbox"]["api_keys"].first["key"]].include?(shop.sift_api_key) %>
             <pre><%= account %></pre>
           <% end %>
         <% end %>
