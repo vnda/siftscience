@@ -32,7 +32,7 @@ class ShopsController < ApplicationController
           @shop.sift_api_key = account[ Rails.env.production? ? "production" : "sandbox" ]["api_keys"].first["key"]
           @shop.save
         else
-          puts "Sift Science Error: #{response}"
+          puts "Sift Science Error: #{response.body}"
         end
       end
 
